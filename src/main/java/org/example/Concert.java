@@ -8,12 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+
 public class Concert extends Evenement{
 
     private String artiste;
     private String genreMusical;
     private List<Participant> participants;
-    public Concert(){};
+    public Concert(){
+        super();
+        this.participants = new ArrayList<>();
+    };
     public Concert(String id, String nom, LocalDateTime date, String lieu, int capaciteMax,String artiste,String genreMusical){
         super(id, nom, date, lieu, capaciteMax);
         this.artiste = artiste;

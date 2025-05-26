@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
 public class Evenementcreer extends JFrame {
 
@@ -14,7 +15,7 @@ public class Evenementcreer extends JFrame {
     private JTextField orgNomField = new JTextField(15);
     private JTextField orgEmailField = new JTextField(15);
 
-    private JComboBox<String> typeEvenementComboBox = new JComboBox<>(new String[]{"Concert", "Conference"});
+    private JComboBox<String> typeEvenementComboBox = new JComboBox<>(new String[]{"concert", "conference"});
 
     private JTextField evenementIdField = new JTextField(15);
     private JTextField nomEvenementField = new JTextField(15);
@@ -24,13 +25,13 @@ public class Evenementcreer extends JFrame {
     private JTextField lieuField = new JTextField(15);
     private JTextField capaciteField = new JTextField(5);
 
-    private JLabel artisteLabel = new JLabel("Artiste (Concert):");
+    private JLabel artisteLabel = new JLabel("Artiste (concert):");
     private JTextField artisteField = new JTextField(15);
 
     private JLabel genreLabel = new JLabel("Genre Musical:");
     private JTextField genreMusicalField = new JTextField(15);
 
-    private JLabel themeLabel = new JLabel("Thème (Conférence):");
+    private JLabel themeLabel = new JLabel("Thème (conférence):");
     private JTextField themeField = new JTextField(15);
 
     private JLabel messageLabel = new JLabel();
@@ -110,8 +111,8 @@ public class Evenementcreer extends JFrame {
     }
 
     private void toggleSpecificFields() {
-        boolean isConcert = "Concert".equals(typeEvenementComboBox.getSelectedItem());
-        boolean isConference = "Conference".equals(typeEvenementComboBox.getSelectedItem());
+        boolean isConcert = "concert".equals(typeEvenementComboBox.getSelectedItem());
+        boolean isConference = "conference".equals(typeEvenementComboBox.getSelectedItem());
 
         artisteLabel.setVisible(isConcert);
         artisteField.setVisible(isConcert);
@@ -176,7 +177,7 @@ public class Evenementcreer extends JFrame {
         Evenement evenement;
         String type = (String) typeEvenementComboBox.getSelectedItem();
 
-        if ("Concert".equals(type)) {
+        if ("concert".equals(type)) {
             String artiste = artisteField.getText().trim();
             String genre = genreMusicalField.getText().trim();
             if (artiste.isEmpty() || genre.isEmpty()) {
@@ -185,7 +186,7 @@ public class Evenementcreer extends JFrame {
                 return;
             }
             evenement = new Concert(evenementId, nomEvenement, dateTime, lieu, capacite, artiste, genre);
-        } else if ("Conference".equals(type)) {
+        } else if ("conference".equals(type)) {
             String theme = themeField.getText().trim();
             if (theme.isEmpty()) {
                 messageLabel.setText("Thème manquant.");
@@ -209,7 +210,10 @@ public class Evenementcreer extends JFrame {
             GestionEvenements.getInstance().ajouterEvenement(evenement);
 
             // Sauvegarder dans le fichier JSON
-            boolean sauvegardeReussie = GestionEvenements.getInstance().SauvegardeEvenement("src/main/resources/evenements.json");
+            Map<String, Evenement> evenements;
+            evenements = GestionEvenements.getInstance().chargerDepuisJson("src/main/resources/evenements.json");
+            evenements.put(evenementId, evenement);
+            boolean sauvegardeReussie = GestionEvenements.getInstance().SauvegardeEvenement( evenements,"src/main/resources/evenements.json");
 
             if (sauvegardeReussie) {
                 messageLabel.setText("Événement créé et sauvegardé avec succès !");
