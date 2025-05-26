@@ -1,36 +1,45 @@
 package org.example;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.File;
 
-public class GestionEvenements implements EvenementObservable{
+public class GestionEvenements implements EvenementObservable {
 
     private static GestionEvenements instance;
 
     private Map<String, Evenement> evenements;
     private Map<String, List<ParticipantObserver>> observateurs;
-    private GestionEvenements(){
+
+    private GestionEvenements() {
+        this.observateurs = new HashMap<>();
         evenements = new HashMap<>();
     }
 
-    public static synchronized GestionEvenements getInstance(){
+    public static synchronized GestionEvenements getInstance() {
         if (instance == null) {
             instance = new GestionEvenements();
         }
         return instance;
     }
-    public void ajouterEvenement(Evenement evenement){
+
+    public void ajouterEvenement(Evenement evenement) {
 
         evenements.put(evenement.getId(), evenement);
         observateurs.put(evenement.getId(), new ArrayList<>());// on cree un array list pour les observateurs
 
     }
-    public boolean supprimerEvenement(String id){
+
+    public boolean supprimerEvenement(String id) {
         if (evenements.containsKey(id)) {
             evenements.remove(id);
             notifierObservateurs(id, "L'événement '" + id + "' a été annulé.");
@@ -38,6 +47,7 @@ public class GestionEvenements implements EvenementObservable{
         }
         return false;
     }
+
     @Override
     public void notifierObservateurs(String idEvenement, String message) { // on definit maintenant la fonction pour notifier les observateurs
         List<ParticipantObserver> liste = observateurs.get(idEvenement);
@@ -47,6 +57,7 @@ public class GestionEvenements implements EvenementObservable{
             }
         }
     }
+
     @Override // Ca c'est pour ajouter un observateur
     public void ajouterObservateur(String idEvenement, ParticipantObserver p) {
         observateurs.computeIfAbsent(idEvenement, k -> new ArrayList<>()).add(p);
@@ -58,10 +69,12 @@ public class GestionEvenements implements EvenementObservable{
             observateurs.get(idEvenement).remove(p);
         }
     }
-     public Evenement rechercherEvenement(String Id){
+
+    public Evenement rechercherEvenement(String Id) {
         // on va mettre ce que ça fait plutard
         return evenements.get(Id);
     }
+
     /*public void modifierEvenement(String id, Evenement evenementModifie) {
         if (evenements.containsKey(id)) {
             evenements.put(id, evenementModifie);
@@ -79,32 +92,39 @@ public class GestionEvenements implements EvenementObservable{
     }
 
 
-
     // ici c'est pour sauvegarder l'évènement dans le fichier on converti le MAP<String,Evenement> en fichier Json
-    public void SauvegardeEvenement(String cheminFichier){
-        try {
-            ObjectMapper mapper = new ObjectMapper();// on cree un mapper pour effectuer la serialiastion
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
-            mapper.writeValue(new File(cheminFichier), evenements.values());
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+    private static final ObjectMapper mapper = new ObjectMapper();
+   static {
+        mapper.registerModule(new JavaTimeModule());
     }
-    public void chargerDepuisJson(String cheminFichier) {
+    public boolean SauvegardeEvenement(Map<String,Evenement> evenements,String cheminFichier) throws IOException {
+
+        mapper.writerFor(new TypeReference<Map<String, Evenement>>() {})
+                .withDefaultPrettyPrinter()
+                .writeValue(new File(cheminFichier),evenements);
+        return true;
+    }
+
+
+    public Map<String, Evenement> chargerDepuisJson(String cheminFichier) {
         try {
-            ObjectMapper mapper = new ObjectMapper();// on cree un mapper pour effectuer la deserialiastion
-            List<Evenement> liste = mapper.readValue( // on lit le fichier Json et on crée une liste d'evenement pour stocker le contenu du fichier
-                    new File(cheminFichier),
-                    mapper.getTypeFactory().constructCollectionType(
-                            List.class, Evenement.class)
-            );
-            for (Evenement e : liste) { // on parcourt ici chaque evenements lu depuis le fichier Json et on ajoute  l’événement dans une Map<String, Evenement> evenements, en utilisant son id comme clé.
-                evenements.put(e.getId(), e);
+            File fichier = new File(cheminFichier);
+
+            if (!fichier.exists() || fichier.length() == 0) {
+                System.out.println("Fichier JSON inexistant ou vide, aucun événement chargé.");
+                return null;
             }
 
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+
+            return mapper.readValue(fichier, new TypeReference<Map<String,Evenement>>() {
+            });
+
         } catch (Exception e) {
+            System.err.println("Erreur lors du chargement du fichier JSON : " + e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
-
 }

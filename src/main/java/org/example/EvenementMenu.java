@@ -12,16 +12,16 @@ public class EvenementMenu extends JFrame {
         setLayout(new GridLayout(4, 1));
 
         JButton creerBtn = new JButton("Créer un événement");
-        creerBtn.addActionListener(e -> new org.example.creer.CreerEvenementForm());
+        creerBtn.addActionListener(e -> new org.example.Evenementcreer());
 
         JButton modifierBtn = new JButton("Modifier un événement");
-        modifierBtn.addActionListener(e -> new org.example.modifier.ModifierEvenementForm());
+        modifierBtn.addActionListener(e -> new org.example.EvenementModifier());
 
         JButton supprimerBtn = new JButton("Supprimer un événement");
-        supprimerBtn.addActionListener(e -> new ui.supprimer.SupprimerEvenementForm());
+        supprimerBtn.addActionListener(e -> new org.example.EvenementSupprimer());
 
         JButton rechercherBtn = new JButton("Rechercher un événement");
-        rechercherBtn.addActionListener(e -> new ui.rechercher.RechercherEvenementForm());
+        rechercherBtn.addActionListener(e -> new org.example.EvenementRechercher());
 
         add(creerBtn);
         add(modifierBtn);

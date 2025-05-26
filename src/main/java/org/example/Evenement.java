@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
         property = "type"
 )
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Conference.class, name = "Conference"),
-        @JsonSubTypes.Type(value = Concert.class, name = "Concert")}
-)
+        @JsonSubTypes.Type(value = Concert.class, name = "concert"),
+        @JsonSubTypes.Type(value = Conference.class, name = "conference")
+})
 public abstract class Evenement {
 
     protected String id;
@@ -45,21 +45,26 @@ public abstract class Evenement {
         return capaciteMax;
     }
 
-    public void setId(){
-        this.id=id;
+    public void setId(String id) {
+        this.id = id;
     }
-    public void setNom(String nom){
-        this.nom = this.nom;
+
+    public void setNom(String nom) {
+        this.nom = nom;
     }
-    public void setDate(){
+
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
-    public void setLieu(String lieu){
-        this.lieu = this.lieu;
+
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
     }
-    public void setCapaciteMax(int capacite){
+
+    public void setCapaciteMax(int capaciteMax) {
         this.capaciteMax = capaciteMax;
     }
+
 
     public abstract boolean ajouterParticipant(Participant participant) throws CapaciteDepasseException;
     public abstract boolean annuler (Participant participant);

@@ -12,10 +12,10 @@ public class ParticipantMenu extends JFrame {
         setLayout(new GridLayout(2, 1));
 
         JButton inscrireBtn = new JButton("Inscrire un participant");
-        inscrireBtn.addActionListener(e -> new org.example.participants.InscriptionForm());
+        inscrireBtn.addActionListener(e -> new org.example.ParticipantInscription());
 
         JButton desinscrireBtn = new JButton("Désinscrire un participant");
-        desinscrireBtn.addActionListener(e -> new org.example.participants.DesinscriptionForm());
+        desinscrireBtn.addActionListener(e -> new org.example.ParticipantNonInscription());
 
         add(inscrireBtn);
         add(desinscrireBtn);
