@@ -27,6 +27,22 @@ public class GestionEvenements implements EvenementObservable {
         }
         return instance;
     }
+    public Map<String, Evenement> getEvenements() {
+        return evenements;
+    }
+    public void setEvenements(Map<String, Evenement> evenements) {
+        this.evenements = evenements;
+    }
+
+    public Map<String, List<ParticipantObserver>> getObservateurs() {
+        return observateurs;
+    }
+    public void setObservateurs(Map<String, List<ParticipantObserver>> nouveaux) {
+        this.observateurs.clear();
+        this.observateurs.putAll(nouveaux);
+    }
+
+
 
     public void ajouterEvenement(Evenement evenement) {
         evenements.put(evenement.getId(), evenement);
@@ -34,6 +50,36 @@ public class GestionEvenements implements EvenementObservable {
     }
 
     public boolean supprimerEvenement(String id) {
+        if (evenements != null) {
+            System.out.println("Contenu actuel de evenements :");
+            for (Map.Entry<String, Evenement> entry : evenements.entrySet()) {
+                System.out.println("Clé = " + entry.getKey() + ", Valeur = " + entry.getValue());
+            }
+
+        } else {
+            System.out.println("La collection evenements est nulle !");
+        }
+
+        if (observateurs != null) {
+            System.out.println("\nContenu actuel de observateurs :");
+            for (Map.Entry<String, List<ParticipantObserver>> entry : observateurs.entrySet()) {
+                System.out.println("Clé (ID événement) = " + entry.getKey());
+                System.out.println("Liste d'observateurs :");
+                List<ParticipantObserver> liste = entry.getValue();
+                if (liste.isEmpty()) {
+                    System.out.println("  Aucun observateur.");
+                } else {
+                    for (ParticipantObserver obs : liste) {
+                        System.out.println("  - " + obs);
+                    }
+                }
+            }
+        } else {
+            System.out.println("La map observateurs est null.");
+        }
+
+        System.out.println("Tentative de suppression de l'événement avec ID = " + id);
+
         if (evenements.containsKey(id)) {
             evenements.remove(id);
             notifierObservateurs(id, "L'événement '" + id + "' a été annulé.");
@@ -75,6 +121,7 @@ public class GestionEvenements implements EvenementObservable {
             e.setNom(nom);
             e.setLieu(lieu);
             e.setCapaciteMax(capacite);
+            notifierObservateurs(id, "L'événement '" + id + "' a été modifié.");
             return true;
         }
         return false;
@@ -94,6 +141,14 @@ public class GestionEvenements implements EvenementObservable {
                 .withDefaultPrettyPrinter()
                 .writeValue(new File(cheminFichier), evenements);
         return true;
+    }
+
+    public void initialiserObservateursDepuisEvenements() {
+        Map<String, List<ParticipantObserver>> map = new HashMap<>();
+        for (String id : evenements.keySet()) {
+            map.put(id, new ArrayList<>()); // Initialiser une liste vide pour chaque événement
+        }
+        setObservateurs(map); // Appel au setter
     }
 
     public Map<String, Evenement> chargerDepuisJson(String cheminFichier) {

@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class EvenementModifier extends JFrame {
 
@@ -18,6 +19,7 @@ public class EvenementModifier extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         initComponents();
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -94,7 +96,9 @@ public class EvenementModifier extends JFrame {
             int capacite = Integer.parseInt(capaciteField.getText().trim());
 
             boolean result = GestionEvenements.getInstance().modifierEvenement(id, nom, lieu, capacite);
-            if (result) {
+            boolean sauvegardeReussie = GestionEvenements.getInstance().SauvegardeEvenement( GestionEvenements.getInstance().getEvenements(),"src/main/resources/evenements.json");
+            GestionEvenements.getInstance().initialiserObservateursDepuisEvenements();
+            if (result || sauvegardeReussie) {
                 messageLabel.setForeground(new Color(0, 128, 0)); // vert
                 messageLabel.setText("Événement modifié avec succès.");
             } else {
@@ -104,6 +108,8 @@ public class EvenementModifier extends JFrame {
         } catch (NumberFormatException ex) {
             messageLabel.setForeground(Color.RED);
             messageLabel.setText("ID et capacité doivent être des nombres valides.");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 

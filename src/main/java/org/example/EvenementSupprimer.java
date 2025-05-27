@@ -4,6 +4,8 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.Map;
 
 public class EvenementSupprimer extends JFrame {
 
@@ -16,6 +18,7 @@ public class EvenementSupprimer extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         initComponents();
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -57,8 +60,11 @@ public class EvenementSupprimer extends JFrame {
     private void supprimer(ActionEvent e) {
         try {
             String id = idField.getText().trim();
+            GestionEvenements.getInstance().initialiserObservateursDepuisEvenements();
             boolean result = GestionEvenements.getInstance().supprimerEvenement(id);
-            if (result) {
+            boolean sauvegardeReussie = GestionEvenements.getInstance().SauvegardeEvenement( GestionEvenements.getInstance().getEvenements(),"src/main/resources/evenements.json");
+            GestionEvenements.getInstance().initialiserObservateursDepuisEvenements();
+            if (result || sauvegardeReussie) {
                 messageLabel.setForeground(new Color(0, 128, 0)); // Vert
                 messageLabel.setText("Événement supprimé.");
             } else {
@@ -68,6 +74,8 @@ public class EvenementSupprimer extends JFrame {
         } catch (NumberFormatException ex) {
             messageLabel.setForeground(Color.RED);
             messageLabel.setText("ID invalide.");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
@@ -75,6 +83,8 @@ public class EvenementSupprimer extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             EvenementSupprimer frame = new EvenementSupprimer();
+            Map<String, Evenement> evenements;
+            evenements = GestionEvenements.getInstance().chargerDepuisJson("src/main/resources/evenements.json");
             frame.setVisible(true);
         });
     }

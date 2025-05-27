@@ -1,0 +1,17 @@
+{
+  "123" : {
+    "type" : "concert",
+    "id" : "123",
+    "nom" : "concert re",
+    "date" : "2025-05-29T20:10:00",
+    "lieu" : "Polytech",
+    "capaciteMax" : 100,
+    "artiste" : "re des pipos",
+    "genreMusical" : "soul",
+    "participants" : [ {
+      "id" : "1234",
+      "nom" : "farelle",
+      "email" : "farelle@gmail.com"
+    } ]
+  }
+}

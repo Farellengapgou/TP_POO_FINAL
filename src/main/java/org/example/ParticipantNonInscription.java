@@ -17,6 +17,7 @@ public class ParticipantNonInscription extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         initComponents();
+        setVisible(true);
     }
 
     private void initComponents() {

@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class ParticipantInscription extends JFrame {
 
@@ -18,6 +19,7 @@ public class ParticipantInscription extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         initComponents();
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -91,7 +93,9 @@ public class ParticipantInscription extends JFrame {
 
         try {
             Participant participant = new Participant(id, nom, email);
+
             Evenement evenement = GestionEvenements.getInstance().rechercherEvenement(idEvent);
+
 
             if (evenement == null) {
                 messageLabel.setText("Événement non trouvé.");
@@ -99,7 +103,9 @@ public class ParticipantInscription extends JFrame {
             }
 
             boolean success = evenement.ajouterParticipant(participant);
-            if (success) {
+            boolean sauvegardeReussie = GestionEvenements.getInstance().SauvegardeEvenement( GestionEvenements.getInstance().getEvenements(),"src/main/resources/evenements.json");
+            if (success || sauvegardeReussie) {
+
                 messageLabel.setForeground(Color.GREEN);
                 messageLabel.setText("Participant inscrit avec succès.");
                 clearFields();
@@ -112,6 +118,8 @@ public class ParticipantInscription extends JFrame {
             messageLabel.setText("ID événement invalide.");
         } catch (CapaciteDepasseException ex) {
             messageLabel.setText("Capacité dépassée !");
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
