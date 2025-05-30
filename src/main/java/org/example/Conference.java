@@ -1,10 +1,15 @@
 package org.example;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//la ligne ci c'est pour eviter les boucles infinies car dans evenment il y a organisateur comme participant, et l'organisateur a aussi sa liste d'évènement qu'il organise . ca ecrit donc en boucle dans le fichier Json sans ça
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Conference extends Evenement {
 
     private String theme;

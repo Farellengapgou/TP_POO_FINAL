@@ -59,7 +59,7 @@ public class GestionEvenements implements EvenementObservable {
         } else {
             System.out.println("La collection evenements est nulle !");
         }
-
+         // Ca c'est pour voir si la liste des observateurs ont bel et boen été chargé . comme ca on saura si la notification ne part pas parceque la liste est vide ou que le problème est ailleur
         if (observateurs != null) {
             System.out.println("\nContenu actuel de observateurs :");
             for (Map.Entry<String, List<ParticipantObserver>> entry : observateurs.entrySet()) {
@@ -77,7 +77,7 @@ public class GestionEvenements implements EvenementObservable {
         } else {
             System.out.println("La map observateurs est null.");
         }
-
+        //ca c'etait pour regarder si L'id n'était  pas le problème quand la suppression dérangeait
         System.out.println("Tentative de suppression de l'événement avec ID = " + id);
 
         if (evenements.containsKey(id)) {
@@ -129,26 +129,26 @@ public class GestionEvenements implements EvenementObservable {
 
     // ObjectMapper global configuré pour toute la classe
     private static final ObjectMapper mapper = new ObjectMapper();
-
+    // ici on fait  le JavaTimeModule() pour que le localtime soit gérer
     static {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.registerSubtypes(Conference.class, Concert.class);
     }
-
+  // Ca c'est pour serialiser
     public boolean SauvegardeEvenement(Map<String, Evenement> evenements, String cheminFichier) throws IOException {
         mapper.writerFor(new TypeReference<Map<String, Evenement>>() {})
                 .withDefaultPrettyPrinter()
                 .writeValue(new File(cheminFichier), evenements);
         return true;
     }
-
+// Ca c'est pour charger la liste des observateurs à nouveau quand nécéssaire en ce servant de la liste des évènements
     public void initialiserObservateursDepuisEvenements() {
         Map<String, List<ParticipantObserver>> map = new HashMap<>();
         for (String id : evenements.keySet()) {
             map.put(id, new ArrayList<>()); // Initialiser une liste vide pour chaque événement
         }
-        setObservateurs(map); // Appel au setter
+        setObservateurs(map);
     }
 
     public Map<String, Evenement> chargerDepuisJson(String cheminFichier) {
